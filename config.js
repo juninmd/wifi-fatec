@@ -21,9 +21,9 @@ module.exports.check = () => {
 module.exports.read = () => {
     return new Promise((resolve, reject) => {
         try {
-            return JSON.parse(fs.readFileSync('./userfatec.txt'));
+            return resolve(JSON.parse(fs.readFileSync('./userfatec.txt')));
         } catch (error) {
-            throw 'Falha ao ler credenciais';
+            return reject('Falha ao ler credenciais');
         }
     })
 }
