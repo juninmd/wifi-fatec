@@ -9,9 +9,22 @@ wifi.init({
 async function fatecConnect() {
     try {
         console.info('[wifi-fatec] ' + 'Tentativa de conectar ao WIFI da Fatec');
-        const tryConnect = await wifi.connect({ ssid: "FATEC", password: "f.franca*" });
+        await wifi.connect({ ssid: "FATEC", password: "f.franca*" });
         await timeSleep();
         console.info('[wifi-fatec] ' + 'Conectado com sucesso!');
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function fatecDisconnect() {
+    try {
+        console.info('[wifi-fatec] ' + 'Tentativa de desconectar ao WIFI da Fatec');
+        const wifiResult = await wifi.getCurrentConnections();
+        if (wifiResult.length > 0)
+            await wifi.disconnect();
+        await timeSleep();
+        console.info('[wifi-fatec] Desconectado e feito logout com sucesso');
     } catch (error) {
         throw error;
     }
@@ -32,6 +45,9 @@ async function wifiConnect(enabled = true, retry = 0) {
         if (wifiResult.length == 1 && wifiResult[0].ssid === 'FATEC') {
             return await connection(enabled);
         }
+        else if (!enabled) {
+            return 'Você já está desconectado!';
+        }
 
         if (retry === 1) {
             throw new Error('Não conseguimos conectar e logar ao wifi da fatec.')
@@ -42,14 +58,13 @@ async function wifiConnect(enabled = true, retry = 0) {
         retry++;
         return wifiConnect(enabled, retry)
     } catch (error) {
-        console.log(error);
         throw error;
     }
 }
 
 function makeRequest(options, enabled) {
     return new Promise((resolve, reject) => {
-        request(options, (err, response) => {
+        request(options, async (err, response) => {
             if (err) {
                 return reject(err);
             }
@@ -60,8 +75,9 @@ function makeRequest(options, enabled) {
                 return reject('Xi deu erro ao logar');
             }
             else if (!enabled) {
-                if (response.body.indexOf('session time') > 1) {
-                    return resolve('logout com sucesso');
+                if (response.body.indexOf('session time') > 1 ||
+                    response.body.indexOf('Hotspot redirect') > 1) {
+                    return await fatecDisconnect();
                 };
                 return reject('Xi deu erro ao deslogar');
             }
@@ -71,6 +87,7 @@ function makeRequest(options, enabled) {
 
 async function connection(enabled) {
     const options = await login(enabled);
+
     return await makeRequest(options, enabled);
 }
 
