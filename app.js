@@ -5,14 +5,14 @@ const wifi = require('./connect');
 const config = require('./config');
 
 if (process.argv.length == 2) {
-    console.log('Verifique os comandos com $ wifi-fatec --help')
+    console.log('[wifi-fatec] ' + 'Verifique os comandos com $ wifi-fatec --help')
 }
 
 program
     .command('check')
     .description('Verifica a versão do wifi-fatec-connector')
     .action((req, optional) => {
-        console.log(version);
+        console.log('[wifi-fatec] ' + version);
     });
 
 program
@@ -22,24 +22,30 @@ program
         const c = process.argv;
 
         if (c.length != 5) {
-            console.log('Por favor informe algo como:');
-            console.log('wifi-fatec <ra> <cpf>');
+            console.log('[wifi-fatec] ' + 'Por favor informe algo como:');
+            console.log('[wifi-fatec] ' + 'wifi-fatec config <ra> <cpf>');
             return;
         }
 
-        result = await config.create({
+        await config.create({
             user: c[3],
             pass: c[4]
         })
-        console.log(result);
+        console.log('[wifi-fatec] ' + 'credenciais criadas com sucesso!');
     });
 
 program
     .command('on')
     .description('Conecta ao wifi da fatec')
     .action(async (req, optional) => {
-        if (config.check())
-            await wifi(true);
+        if (config.check()) {
+            try {
+                const r = await wifi(true);
+                console.log('[wifi-fatec] ' + r);
+            } catch (error) {
+                console.error('[wifi-fatec] ' + error);
+            }
+        }
     });
 
 program
@@ -47,8 +53,14 @@ program
     .command('off')
     .description('Desloga do wifi da fatec')
     .action(async (req, optional) => {
-        if (config.check())
-            await wifi(false);
+        if (config.check()) {
+            try {
+                const r = await wifi(false);
+                console.log('[wifi-fatec] ' + r);
+            } catch (error) {
+                console.error('[wifi-fatec] ' + error);
+            }
+        }
     });
 
 

@@ -12,7 +12,8 @@ module.exports.create = async (credentials) => {
 module.exports.check = () => {
     const exist = fs.existsSync('./userfatec.txt');
     if (!exist) {
-        console.warn('Por favor, crie as credenciais!');
+        console.warn('[wifi-fatec] ' + 'Por favor, crie as credenciais!');
+        console.warn('[wifi-fatec] ' + 'wifi-fatec config <ra> <cpf>');
     }
     return exist;
 }
