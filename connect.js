@@ -10,12 +10,21 @@ async function fatecConnect() {
     try {
         console.info('[wifi-fatec] ' + 'Tentativa de conectar ao WIFI da Fatec');
         const tryConnect = await wifi.connect({ ssid: "FATEC", password: "f.franca*" });
+        await timeSleep();
         console.info('[wifi-fatec] ' + 'Conectado com sucesso!');
     } catch (error) {
         throw error;
     }
 }
 
+function timeSleep() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            return resolve({});
+        }, 2500);
+    });
+
+}
 async function wifiConnect(enabled = true, retry = 0) {
     try {
         const wifiResult = await wifi.getCurrentConnections();
