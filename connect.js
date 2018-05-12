@@ -16,35 +16,53 @@ async function fatecConnect() {
     }
 }
 
-async function wifiConnect(enabled = true) {
+async function wifiConnect(enabled = true, retry = 0) {
     try {
         const wifiResult = await wifi.getCurrentConnections();
 
         if (wifiResult.length == 1 && wifiResult[0].ssid === 'FATEC') {
             return await connection(enabled);
         }
+
+        if (retry === 1) {
+            throw new Error('Não conseguimos conectar e logar ao wifi da fatec.')
+        }
+
         console.error('[wifi-fatec] ' + 'Você não está no Wifi da FATEC!');
-        return await fatecConnect();
+        await fatecConnect();
+        retry++;
+        return wifiConnect(enabled, retry)
     } catch (error) {
+        console.log(error);
         throw error;
     }
 }
 
-function connection(enabled) {
-    return new Promise(async (resolve, reject) => {
-        const options = await login(enabled);
+function makeRequest(options, enabled) {
+    return new Promise((resolve, reject) => {
         request(options, (err, response) => {
             if (err) {
                 return reject(err);
             }
-            if (enabled && response.body.indexOf('You are logged in') > 1) {
-                return resolve('logado com sucesso');
+            if (enabled) {
+                if (response.body.indexOf('You are logged in') > 1) {
+                    return resolve('logado com sucesso');
+                }
+                return reject('Xi deu erro ao logar');
             }
-            else if (!enabled && response.body.indexOf('session time') > 1) {
-                return resolve('logout com sucesso');
-            };
+            else if (!enabled) {
+                if (response.body.indexOf('session time') > 1) {
+                    return resolve('logout com sucesso');
+                };
+                return reject('Xi deu erro ao deslogar');
+            }
         })
-    });
+    })
+}
+
+async function connection(enabled) {
+    const options = await login(enabled);
+    return await makeRequest(options, enabled);
 }
 
 module.exports = (enabled) => wifiConnect(enabled);
