@@ -8,11 +8,10 @@ wifi.init({
 
 async function fatecConnect() {
     try {
-        console.info('Tentativa de conectar ao WIFI da Fatec');
+        console.info('[wifi-fatec] ' + 'Tentativa de conectar ao WIFI da Fatec');
         const tryConnect = await wifi.connect({ ssid: "FATEC", password: "f.franca*" });
-        console.info('Conectado com sucesso!');
+        console.info('[wifi-fatec] ' + 'Conectado com sucesso!');
     } catch (error) {
-        console.log(error);
         throw error;
     }
 }
@@ -24,7 +23,7 @@ async function wifiConnect(enabled = true) {
         if (wifiResult.length == 1 && wifiResult[0].ssid === 'FATEC') {
             return await connection(enabled);
         }
-        console.error('Você não está no Wifi da FATEC!');
+        console.error('[wifi-fatec] ' + 'Você não está no Wifi da FATEC!');
         return await fatecConnect();
     } catch (error) {
         throw error;
