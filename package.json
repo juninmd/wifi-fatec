@@ -18,8 +18,10 @@
   "homepage": "https://github.com/juninmd/wifi-fatec#readme",
   "dependencies": {
     "commander": "^2.15.1",
-    "node-wifi": "^2.0.4",
-    "request": "^2.85.0"
+    "node-wifi": "^2.0.16"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "preferGlobal": true,
   "bin": {

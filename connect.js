@@ -1,4 +1,3 @@
-const request = require('request');
 const wifi = require('node-wifi');
 const login = require('./login.util');
 
@@ -64,24 +63,31 @@ async function wifiConnect(enabled = true, retry = 0) {
 
 function makeRequest(options, enabled) {
     return new Promise((resolve, reject) => {
-        request(options, async (err, response) => {
-            if (err) {
-                return reject(err);
-            }
-            if (enabled) {
-                if (response.body.indexOf('You are logged in') > 1) {
-                    return resolve('logado com sucesso');
-                }
-                return reject('Xi deu erro ao logar');
-            }
-            else if (!enabled) {
-                if (response.body.indexOf('session time') > 1 ||
-                    response.body.indexOf('Hotspot redirect') > 1) {
-                    return await fatecDisconnect();
-                };
-                return reject('Xi deu erro ao deslogar');
-            }
+        // Buffer body: fetch would add text/plain Content-Type, which request never sent.
+        // redirect manual: request did not follow redirects on POST either.
+        fetch(options.url, {
+            method: options.method,
+            headers: options.headers,
+            body: Buffer.from(options.body),
+            redirect: 'manual',
         })
+            .then(response => response.text())
+            .then(async (body) => {
+                if (enabled) {
+                    if (body.indexOf('You are logged in') > 1) {
+                        return resolve('logado com sucesso');
+                    }
+                    return reject('Xi deu erro ao logar');
+                }
+                else if (!enabled) {
+                    if (body.indexOf('session time') > 1 ||
+                        body.indexOf('Hotspot redirect') > 1) {
+                        return await fatecDisconnect();
+                    };
+                    return reject('Xi deu erro ao deslogar');
+                }
+            })
+            .catch(reject);
     })
 }
 
