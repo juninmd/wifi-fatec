@@ -1,0 +1,7 @@
+# Falsos positivos/residuos historicos confirmados manualmente.
+# Senha do wifi da Fatec hardcoded em commit historico; o codigo atual exige FATEC_WIFI_PASSWORD do ambiente.
+# Formato: commit:arquivo:regra:linha (fingerprint exato; segredo novo no
+# mesmo arquivo continua sendo detectado).
+
+324cb363f81363511dbc9e4c6ea9e5f31478c0fe:connect.js:juninmd-hardcoded-password:12
+8b279239b85a167fc215e9c2e9c2df65bf37b8b5:connect.js:juninmd-hardcoded-password:12
