@@ -1,14 +1,24 @@
 const wifi = require('node-wifi');
 const login = require('./login.util');
 
+// A senha do wifi da Fatec e um segredo compartilhado: nunca vai no codigo.
+// Defina FATEC_WIFI_PASSWORD no ambiente (ou no .env, que fica fora do git).
+const SSID = process.env.FATEC_SSID || 'FATEC';
+
 wifi.init({
     iface: null
 });
 
 async function fatecConnect() {
+    const password = process.env.FATEC_WIFI_PASSWORD;
+    if (!password) {
+        throw new Error(
+            '[wifi-fatec] FATEC_WIFI_PASSWORD nao definida: exporte a senha do wifi antes de conectar'
+        );
+    }
     try {
         console.info('[wifi-fatec] ' + 'Tentativa de conectar ao WIFI da Fatec');
-        await wifi.connect({ ssid: "FATEC", password: process.env.WIFI_PASSWORD });
+        await wifi.connect({ ssid: SSID, password });
         await timeSleep();
         console.info('[wifi-fatec] ' + 'Conectado com sucesso!');
     } catch (error) {
@@ -41,7 +51,7 @@ async function wifiConnect(enabled = true, retry = 0) {
     try {
         const wifiResult = await wifi.getCurrentConnections();
 
-        if (wifiResult.length == 1 && wifiResult[0].ssid === 'FATEC') {
+        if (wifiResult.length == 1 && wifiResult[0].ssid === SSID) {
             return await connection(enabled);
         }
         else if (!enabled) {
