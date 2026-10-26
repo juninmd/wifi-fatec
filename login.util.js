@@ -5,9 +5,9 @@ module.exports = async (flag) => {
     return options = {
         url: `http://172.20.0.3/webfig/${flag ? 'login' : 'logout'}`,
         method: 'POST',
-        body: `dst=&popup=true&username=${person.user}&password=${person.pass}`,
+        body: new URLSearchParams({ dst: '', popup: 'true', username: person.user, password: person.pass }).toString(),
         headers: {
-            Cookie: `username=${person.user}`,
+            Cookie: `username=${encodeURIComponent(person.user)}`,
         }
     };
 }

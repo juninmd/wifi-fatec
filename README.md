@@ -1,4 +1,3 @@
-```markdown
 # WifiFatec
 
 **A standard software project.**
@@ -9,7 +8,7 @@ This repository contains a standard software project focused on foundational net
 
 **Installation:**
 
-1.  Clone the repository: `git clone https://github.com/your-username/wifi-fatec.git`
+1.  Clone the repository: `git clone https://github.com/juninmd/wifi-fatec.git`
 2.  Navigate to the project directory: `cd wifi-fatec`
 3.  Install dependencies: `npm install` or `yarn install` (requires Node.js 18+, uses the built-in `fetch`)
 
@@ -36,4 +35,3 @@ This repository contains a standard software project focused on foundational net
 *   package-lock.json
 *   package.json
 *   yarn.lock
-```
