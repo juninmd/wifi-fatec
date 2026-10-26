@@ -10,7 +10,7 @@ if (process.argv.length == 2) {
 
 program
     .command('check')
-    .description('Verifica a versão do wifi-fatec-connector')
+    .description('Verifica a versão do wifi-fatec')
     .action((req, optional) => {
         console.log('[wifi-fatec] ' + version);
     });
